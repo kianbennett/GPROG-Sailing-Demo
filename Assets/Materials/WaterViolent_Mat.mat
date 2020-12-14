@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: NewWater_Mat
+  m_Name: WaterViolent_Mat
   m_Shader: {fileID: -6465566751694194690, guid: f223e6070e5927f4194be32a51379625, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -64,12 +64,12 @@ Material:
     - Vector1_4769a36f91374bd294e2b84d6b7c880d: 1
     - Vector1_4bd7a37d42044ecfaa968e5fbd932e07: 0.75
     - Vector1_5836d684592245828baf315f5525a0f1: 2.16
-    - Vector1_5f2fa45d3e294a0ea898598b322b14b5: 5
-    - Vector1_66c093686e03421d89bb6429ada9c5a8: 2.445
+    - Vector1_5f2fa45d3e294a0ea898598b322b14b5: 1.06
+    - Vector1_66c093686e03421d89bb6429ada9c5a8: 2.5
     - Vector1_68ce1a47d26243788689bdbd84db6687: 0
     - Vector1_a6951b0f23a544f48f05ee81135876bb: 1.5
     - Vector1_adcde412a49b4e029c09e077b08f883d: 10
-    - Vector1_b1525d5e1f6a43c897ffb113519bffcf: 0.495
+    - Vector1_b1525d5e1f6a43c897ffb113519bffcf: 0.5
     - Vector1_b249c6aeae3747afbe6e456a974e3e96: 9
     - Vector1_bbbb57ecdd7e47b1a84c925765b19ef0: 8
     - Vector1_c26a88daaf5a4e11b6eb878a9ab95617: 0.645
@@ -81,24 +81,38 @@ Material:
     - Vector1_e83bf6a4c37a4a068d91bf11405db66f: 0.4
     - Vector1_fd9eaca8e5794201ba0d81e0fde52109: 2.5
     - _AlphaClip: 0
+    - _Amplitude1: 2.16
+    - _Amplitude2: 0.5
+    - _Amplitude3: 2.5
+    - _Amplitude4: 0.1
     - _Blend: 0
     - _BumpScale: 1
     - _ClearCoat: 0
     - _ClearCoatMask: 0
     - _Cull: 2
     - _Cutoff: 0.5
+    - _Depth: 10
     - _DstBlend: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _Gravity: 9
     - _Metallic: 0
+    - _NormalSpeed1: 0
+    - _NormalSpeed2: 0
+    - _NormalStrength: 0.4
     - _OcclusionStrength: 1
+    - _Phase: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
+    - _Speed1: 1.5
+    - _Speed2: 1.5
+    - _Speed3: 0.75
+    - _Speed4: 2.5
     - _SrcBlend: 1
     - _Surface: 0
     - _WorkflowMode: 1
@@ -116,7 +130,14 @@ Material:
     - Vector3_ce884ff6c7d343fd800ee9365af1c6f7: {r: 0.09, g: 0, b: 0.2, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _ColourShallow: {r: 0.2901961, g: 0.60784316, b: 0.65882355, a: 1}
+    - _Direction1: {r: 0.1, g: 0, b: 0.05, a: 0}
+    - _Direction2: {r: 0.09, g: 0, b: 0.2, a: 0}
+    - _Direction3: {r: 0.15, g: 0, b: -0.08, a: 0}
+    - _Direction4: {r: -0.2, g: 0, b: 0.12, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _NormalSpeed1: {r: 0, g: 0, b: 0, a: 0}
+    - _NormalSpeed2: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &3651647382492051402

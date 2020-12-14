@@ -1,9 +1,10 @@
 float3 GerstnerWave(float3 pos, float phase, float time, float gravity, float depth, float3 dir, float amplitude) {
-    float angularFreq = sqrt(gravity * length(dir) * tanh(length(dir) * depth));
+    float dirLength = length(dir);
+    float angularFreq = sqrt(gravity * dirLength * tanh(dirLength * depth));
     float theta = dir.x * pos.x +  dir.z * pos.z - angularFreq * time - phase;
-    float x = -(dir.x / length(dir)) * (amplitude / tanh(length(dir) * depth)) * sin(theta);
+    float x = -(dir.x / dirLength) * (amplitude / tanh(dirLength * depth)) * sin(theta);
     float y = amplitude * cos(theta);
-    float z = -(dir.z / length(dir)) * (amplitude / tanh(length(dir) * depth)) * sin(theta);
+    float z = -(dir.z / dirLength) * (amplitude / tanh(dirLength * depth)) * sin(theta);
     return float3(x, y, z);
 }
 

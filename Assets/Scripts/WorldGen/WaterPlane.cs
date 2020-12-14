@@ -11,7 +11,7 @@ public class WaterPlane : MonoBehaviour {
     public float resolution;
 
     public void GenerateMesh() {
-        MeshData meshData = new MeshData((int) (width * resolution), (int) (height * resolution), 1f / resolution);
+        MeshData meshData = new MeshData(Mathf.CeilToInt(width * resolution) + 1, Mathf.CeilToInt(height * resolution) + 1, 1f / resolution);
         meshFilter.sharedMesh = meshData.CreateMesh();
     }
 }

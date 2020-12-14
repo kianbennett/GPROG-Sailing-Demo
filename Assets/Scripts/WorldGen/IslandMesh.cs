@@ -15,7 +15,7 @@ public class MeshData {
         triangles = new int[(meshWidth - 1) * (meshHeight - 1) * 6];
         uvs = new Vector2[meshWidth * meshHeight];
 
-        // Unitialise mesh to flat plane
+        // Initialise mesh to flat plane
         int vertexIndex = 0;
         for(int j = 0; j < meshHeight; j++) {
             for(int i = 0; i < meshWidth; i++) {
@@ -47,6 +47,22 @@ public class MeshData {
         mesh.RecalculateTangents();
         mesh.RecalculateBounds();
         return mesh;
+    }
+
+    // Maybe add meshOrigin as member of MeshData?
+    public bool RayIntersects(Ray ray, Vector3 meshOrigin, out float dist) {
+        bool hit = false;
+        dist = 0;
+
+        for(int i = 0; i < triangles.Length / 3; i++) {
+            Vector3 v1 = meshOrigin + vertices[triangles[i * 3]];
+            Vector3 v2 = meshOrigin + vertices[triangles[i * 3 + 1]];
+            Vector3 v3 = meshOrigin + vertices[triangles[i * 3 + 2]];
+
+            hit = MathUtil.IntersectsTriangle(ray, v1, v2, v3, out dist);
+            if(hit) return true;
+        }
+        return false;
     }
 }
 

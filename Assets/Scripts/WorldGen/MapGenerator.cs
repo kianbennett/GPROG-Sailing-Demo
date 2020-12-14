@@ -93,7 +93,7 @@ public class MapGenerator : Singleton<MapGenerator> {
         
         GenerateObjects();
 
-        Debug.Log("Generated map");
+        // Debug.Log("Generated map");
     }
 
     public void GenerateObjects() {
