@@ -113,7 +113,7 @@ public class ShipPhysics : MonoBehaviour {
             amplitudes[i] = waterMesh.sharedMaterial.GetFloat("_Amplitude" + (i + 1));
         }
 
-        // stopwatch.Restart();
+        stopwatch.Restart();
         updatePatchMesh();
         // Debug.Log("Update patch mesh: " + stopwatch.ElapsedTicks);
         // stopwatch.Restart();
@@ -136,7 +136,7 @@ public class ShipPhysics : MonoBehaviour {
             }
         }
 
-        // stopwatch.Stop();
+        stopwatch.Stop();
         // Debug.Log("Elapsed: " + stopwatch.ElapsedTicks);
     }
 

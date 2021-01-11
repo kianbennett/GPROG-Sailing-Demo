@@ -44,23 +44,23 @@ public class PalmTree : IslandObject {
         float segments = Mathf.FloorToInt(length / segmentLength);
         float scaledSegmentLength = length / segments;
 
-        Vector3 segmentPos = Vector3.zero;
+        Vector3 lastSegmentPos = Vector3.zero;
         float segmentAngle = 0;
 
         for(int i = 0; i < segments; i++) {
-            float y = segmentPos.y + scaledSegmentLength * Mathf.Cos(segmentAngle * Mathf.Deg2Rad);
+            float y = lastSegmentPos.y + scaledSegmentLength * Mathf.Cos(segmentAngle * Mathf.Deg2Rad);
             float x = Mathf.Pow(curveAmount * y, 2);
             Vector3 pos = new Vector3(x, y);
-            segmentAngle = Vector3.Angle(Vector3.up, pos - segmentPos);
+            segmentAngle = Vector3.Angle(Vector3.up, pos - lastSegmentPos);
 
-            GameObject segment = Instantiate(i < segments - 1 ? trunkSegment : trunkSegmentTop, segmentPos, Quaternion.Euler(0, 0, -segmentAngle));
+            GameObject segment = Instantiate(i < segments - 1 ? trunkSegment : trunkSegmentTop, lastSegmentPos, Quaternion.Euler(0, 0, -segmentAngle));
             segment.transform.localScale = new Vector3(trunkWidth, scaledSegmentLength / segmentLength, trunkWidth);
             segment.transform.SetParent(componentContainer, false);
 
-            segmentPos = pos;
+            lastSegmentPos = pos;
         }
 
-        leavesContainer.transform.localPosition = segmentPos;
+        leavesContainer.transform.localPosition = lastSegmentPos;
         leavesContainer.transform.localRotation = Quaternion.Euler(0, 0, -segmentAngle + 60 * curveAmount);
 
         float leavesScale = Mathf.Clamp(0.5f + length / 3, 0.5f, 2f);
@@ -121,6 +121,7 @@ public class PalmTree : IslandObject {
         }
     }
 
+    // Mitchell's best candidate
     private float getNextLeafAngle(List<Tuple<int, float>> existing, System.Random random) {
         float bestCandidate = 0;
         float bestDistance = 0;

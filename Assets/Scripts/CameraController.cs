@@ -14,9 +14,16 @@ public class CameraController : Singleton<CameraController> {
     public float cameraSmoothTime;
     public float fovChangeSpeed;
 
+    [Header("Shake")]
+    public float maxShakeAmount;
+    public float shakeNoiseScale, shakeDampSpeed, shakeSmoothAmount;
+
     private float cameraDist;
     private float rotX, rotY;
     private float fovInit, fovOffset;
+
+    private Vector2 shakeTarget;
+    private float shakeAmount;
 
     protected override void Awake() {
         base.Awake();
@@ -24,7 +31,7 @@ public class CameraController : Singleton<CameraController> {
         fovInit = camera.fieldOfView;
     }
 
-    void LateUpdate() {
+    void Update() {
         // Rotate the camera if cursor is locked
         if(Cursor.lockState == CursorLockMode.Locked) {
             Vector2 mouseDelta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
@@ -41,7 +48,12 @@ public class CameraController : Singleton<CameraController> {
         if(shipFocus) {
             transform.position = shipFocus.cameraPosition.transform.position;
         }
-        camera.transform.localPosition = new Vector3(0, 0, Mathf.Lerp(camera.transform.localPosition.z, cameraDist, Time.deltaTime * 10));
+
+        shakeTarget = new Vector2(-0.5f + Mathf.PerlinNoise(Time.time * shakeNoiseScale, 0), -0.5f + Mathf.PerlinNoise(0, Time.time * shakeNoiseScale));
+        shakeAmount = Mathf.MoveTowards(shakeAmount, 0, Time.deltaTime * shakeDampSpeed);
+        Vector2 shakeOffset = shakeAmount * Vector2.Lerp(camera.transform.localPosition, shakeTarget, Time.deltaTime * shakeSmoothAmount);
+
+        camera.transform.localPosition = new Vector3(shakeOffset.x, shakeOffset.y, Mathf.Lerp(camera.transform.localPosition.z, cameraDist, Time.deltaTime * 10));
         float currentRotX = cameraContainer.transform.localRotation.eulerAngles.x;
         float currentRotY = transform.localRotation.eulerAngles.y;
         float velocity = 0f;
@@ -73,5 +85,9 @@ public class CameraController : Singleton<CameraController> {
 
     public void SetFovOffset(float offset) {
         fovOffset = offset;
+    }
+
+    public void Shake() {
+        shakeAmount = maxShakeAmount;
     }
 }

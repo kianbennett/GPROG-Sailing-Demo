@@ -17,7 +17,9 @@ public class Ship : MonoBehaviour {
     public Transform[] cannonHolders;
     public Transform[] cannons;
     public Transform[] cannonBallSpawnPoints;
-    public ParticleSystem[] cannonFireParticles;
+    public ParticleSystem[] cannonSmokeParticles;
+    public ParticleSystem[] cannonSparkParticles;
+    public Light[] cannonLights;
     public LineRenderer cannonGuideRenderer;
     public Transform cannonGuideHitSprite;
 
@@ -31,6 +33,7 @@ public class Ship : MonoBehaviour {
     public float mastRopeSlack, sailRopeSlackL, sailRopeSlackR;
 
     [Header("Control Parameters")]
+    public bool playerControls;
     [Range(-1f, 1f)]
     public float rudderTurnAmount;
     public float rudderTurnSpeed;
@@ -56,29 +59,29 @@ public class Ship : MonoBehaviour {
     }
 
     void Update() {
-        // Turn rudder
-        float rudderTurnInput = Input.GetAxisRaw("Horizontal");
-        rudderTurnAmount += rudderTurnInput * rudderTurnSpeed * Time.deltaTime;
-        if(rudderTurnInput == 0 && rudderTurnAmount > -0.2f && rudderTurnAmount < 0.2f) {
-            rudderTurnAmount = Mathf.Lerp(rudderTurnAmount, 0f, Time.deltaTime * 2);
-        }
-        rudderTurnAmount = Mathf.Clamp(rudderTurnAmount, -1f, 1f);
-
-        // Turn sail
         float sailTurnInput = 0;
-        if(Input.GetKey(KeyCode.Q)) sailTurnInput = -1;
-        if(Input.GetKey(KeyCode.E)) sailTurnInput = 1;
-        sailTurnAmount += sailTurnInput * sailTurnSpeed * Time.deltaTime;
-        sailTurnAmount = Mathf.Clamp(sailTurnAmount, -1f, 1f);
 
-        sailRopeSlackL = Mathf.Lerp(sailRopeSlackL, sailTurnInput < 0 ? 0f : 0.34f, Time.deltaTime * 5);
-        sailRopeSlackR = Mathf.Lerp(sailRopeSlackR, sailTurnInput > 0 ? 0f : 0.34f, Time.deltaTime * 5);
+        if(playerControls) {
+            // Turn rudder
+            float rudderTurnInput = Input.GetAxisRaw("Horizontal");
+            rudderTurnAmount += rudderTurnInput * rudderTurnSpeed * Time.deltaTime;
+            if(rudderTurnInput == 0 && rudderTurnAmount > -0.2f && rudderTurnAmount < 0.2f) {
+                rudderTurnAmount = Mathf.Lerp(rudderTurnAmount, 0f, Time.deltaTime * 2);
+            }
+            rudderTurnAmount = Mathf.Clamp(rudderTurnAmount, -1f, 1f);
 
-        // Lower sail
-        float sailLowerInput = Input.GetAxisRaw("Vertical");
-        sailLowerAmount += -sailLowerInput * sailLowerSpeed * Time.deltaTime;
-        sailLowerAmount = Mathf.Clamp(sailLowerAmount, 0f, 1f);
+            // Turn sail
+            if(Input.GetKey(KeyCode.Q)) sailTurnInput = -1;
+            if(Input.GetKey(KeyCode.E)) sailTurnInput = 1;
+            sailTurnAmount += sailTurnInput * sailTurnSpeed * Time.deltaTime;
+            sailTurnAmount = Mathf.Clamp(sailTurnAmount, -1f, 1f);
 
+            // Lower sail
+            float sailLowerInput = Input.GetAxisRaw("Vertical");
+            sailLowerAmount += -sailLowerInput * sailLowerSpeed * Time.deltaTime;
+            sailLowerAmount = Mathf.Clamp(sailLowerAmount, 0f, 1f);
+        }
+        
         // Transform objects
         wheel.localRotation = Quaternion.Euler(0, 0, -180 * rudderTurnAmount);
         rudder.localRotation = Quaternion.Euler(0, -65 * rudderTurnAmount, 0);
@@ -95,10 +98,18 @@ public class Ship : MonoBehaviour {
             }
         }
 
+        // Update lights
+        foreach(Light light in cannonLights) {
+            light.intensity = Mathf.MoveTowards(light.intensity, 0, Time.deltaTime * 120);
+        }
+
         // Update ropes
-        calculateRopePoints(mastRopePointF.position, mastRopePointB.position, mastRopeRenderer, mastRopeSlack);
-        calculateRopePoints(hullRopePointL.position, sailRopePointL.position, sailRopeRendererL, sailRopeSlackL);
-        calculateRopePoints(hullRopePointR.position, sailRopePointR.position, sailRopeRendererR, sailRopeSlackR);
+        sailRopeSlackL = Mathf.Lerp(sailRopeSlackL, sailTurnInput < 0 ? 0f : 0.34f, Time.deltaTime * 5);
+        sailRopeSlackR = Mathf.Lerp(sailRopeSlackR, sailTurnInput > 0 ? 0f : 0.34f, Time.deltaTime * 5);
+
+        CalculateRopePoints(mastRopePointF.position, mastRopePointB.position, mastRopeRenderer, mastRopeSlack);
+        CalculateRopePoints(hullRopePointL.position, sailRopePointL.position, sailRopeRendererL, sailRopeSlackL);
+        CalculateRopePoints(hullRopePointR.position, sailRopePointR.position, sailRopeRendererR, sailRopeSlackR);
 
         float cameraRotY = CameraController.instance.transform.rotation.eulerAngles.y;
         float cameraRotX = CameraController.instance.cameraContainer.localRotation.eulerAngles.x;
@@ -127,11 +138,9 @@ public class Ship : MonoBehaviour {
             calculateCannonGuideLines(cannonActive);
         }
 
-        if(Input.GetKeyDown(KeyCode.Space)) {
-            fireCannon(cannonActive);
-        }
+        Time.timeScale = isAiming ? 0.5f : 1.0f;
 
-        if(Cursor.lockState == CursorLockMode.Locked) {
+        if(Cursor.lockState == CursorLockMode.Locked && playerControls) {
             // Set anchored
             if(Input.GetKeyDown(KeyCode.Space)) {
                 isAnchored = !isAnchored;
@@ -164,9 +173,15 @@ public class Ship : MonoBehaviour {
     private void fireCannon(int cannon) {
         Cannonball cannonBall = Instantiate(cannonBallPrefab, cannonBallSpawnPoints[cannon].position, cannons[cannon].transform.rotation);
         // Add opposite force to ship
-        rigidbody.AddForceAtPosition(-cannons[cannon].transform.forward * 0.2f, cannonBallSpawnPoints[cannon].position, ForceMode.Impulse);
+        Vector3 dir = -cannons[cannon].transform.forward * cannonBallForce;
+        dir.y = 0; // Take height out of force so it only rocks to the side
+        rigidbody.AddForceAtPosition(dir, cannonBallSpawnPoints[cannon].position, ForceMode.Impulse);
         // Play particles
-        cannonFireParticles[cannon].Play();
+        cannonSmokeParticles[cannon].Play();
+        cannonSparkParticles[cannon].Play();
+
+        cannonLights[cannon].intensity = 20;
+        CameraController.instance.Shake();
     }
 
     private void setAiming(bool aiming) {
@@ -177,7 +192,8 @@ public class Ship : MonoBehaviour {
     }
 
     // Calculate vertices along the line renderer for a rope connecting two points, defined by a catenary curve
-    private void calculateRopePoints(Vector3 pos1, Vector3 pos2, LineRenderer lineRenderer, float ropeSlack) {
+    // From https://math.stackexchange.com/questions/3557767/how-to-construct-a-catenary-of-a-specified-length-through-two-specified-points#mjx-eqn-val1
+    public void CalculateRopePoints(Vector3 pos1, Vector3 pos2, LineRenderer lineRenderer, float ropeSlack) {
         // For some reason some ropes can't handle a ropeSlack of zero, not sure why (this works for now)
         if(ropeSlack <= 0.001f) ropeSlack = 0.001f;
 
@@ -238,7 +254,7 @@ public class Ship : MonoBehaviour {
         int n = cannonGuideRenderer.positionCount;
 
         // v = (F/m)t
-        Vector3 velocity = (cannons[cannon].transform.forward * cannonBallForce / cannonBallPrefab.GetComponent<Rigidbody>().mass);
+        Vector3 velocity = (cannons[cannon].transform.forward * cannonBallPrefab.force / cannonBallPrefab.GetComponent<Rigidbody>().mass);
         Vector3 cannonPos = cannonBallSpawnPoints[cannon].position + velocity.normalized * 0.3f;
 
         cannonGuideHitSprite.gameObject.SetActive(false);

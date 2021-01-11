@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0977f9bbf12d3804da4bfd59b9e8a54c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  force: 25
+  force: 30
   lifetime: 4
   explodeParticles: {fileID: 6659368553695649417, guid: 533850bc1a105fd4db5a61d87c77c075, type: 3}
   rigidbody: {fileID: -1527067721472349250}

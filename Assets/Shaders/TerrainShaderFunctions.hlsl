@@ -46,7 +46,7 @@ void GetColourFromHeight_float(float posY, float minHeight, float maxHeight, flo
             break;
         }
 
-        // If the colour isn't within the limits of any region (and doesn't break the loop
+        // If the colour isn't within the limits of any region (and doesn't break the loop)
         // then it will default to the last colour (to make sure the top of the terrain is completely coloured)
         colourOut = colours[i];
     }
