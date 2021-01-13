@@ -1,0 +1,17 @@
+-- SHIP--
+
+- W/S to raise and lower the sails
+- Q/E to turn the main sail left and right
+- A/D to turn the wheel left and right
+- Space to raise and lower the anchor
+
+-- CANNONS -- 
+
+- Hold right click to aim the cannons
+- Left click to first the cannon
+
+-- CAMERA --
+
+- Scroll wheel to zoom in and out
+- Escape to unlock the mouse cursor (left click to lock again)
+
