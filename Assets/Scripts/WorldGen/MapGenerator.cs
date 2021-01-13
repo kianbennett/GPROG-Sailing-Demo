@@ -54,10 +54,9 @@ public class MapGenerator : Singleton<MapGenerator> {
     protected override void Awake() {
         base.Awake();
         GenerateMap();
-
-        // InvokeRepeating("NextIsland", 0.7f, 0.7f);
     }
 
+    // Increment all the island seeds by one and regenerate, useful for recording videos of constantly regenerating islands
     public void NextIslands() {
         foreach(IslandParameters parameters in islandParameters) {
             parameters.seed++;
@@ -98,9 +97,6 @@ public class MapGenerator : Singleton<MapGenerator> {
 
     public void GenerateObjects() {
         foreach(Island island in islands) {
-            // island.GenerateObjects(palmTreeInfo.prefab, palmTreeInfo.startHeight, palmTreeInfo.endHeight, palmTreeInfo.noiseThreshold, palmTreeNoise);
-            // island.GenerateObjects(palmTreeInfo);
-            // island.GenerateObjects(rockInfo);
             foreach(TerrainObject terrainObect in terrainObjects) {
                 island.GenerateObjects(terrainObect);
             }
@@ -129,16 +125,20 @@ public class MapGenerator : Singleton<MapGenerator> {
 
     // Regenerate the map when values are changed
     void OnValuesUpdated() {
+        #if UNITY_EDITOR
 		if (!Application.isPlaying) {
             UnityEditor.EditorApplication.update -= OnValuesUpdated;
 			GenerateMap();
 		}
+        #endif
 	}
 
     // Ensure values can't be edited outside of the valid range
     void OnValidate() {
+        #if UNITY_EDITOR
         if(autoUpdate) {
             UnityEditor.EditorApplication.update += OnValuesUpdated;
         }
+        #endif
     }
 }

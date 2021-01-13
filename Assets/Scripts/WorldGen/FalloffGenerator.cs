@@ -10,6 +10,7 @@ public static class FalloffGenerator {
             for(int j = 0; j < height; j++) {
                 float distToCentre = 0;
 
+                // Instead of getting the distance to the centre, get the distance to a line in the middle of the rectangle
                 if(width > height) {
                     distToCentre = MathUtil.DistancePointLine(new Vector3(i, j), new Vector3(height / 2, height / 2), new Vector3(width - height / 2, height / 2));
                     distToCentre /= height * Mathf.Sqrt(0.5f); // Normalise

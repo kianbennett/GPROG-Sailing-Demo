@@ -48,7 +48,7 @@ public static class Noise {
                     float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
                     noiseHeight += perlinValue * amplitude;
 
-                    amplitude *= persistance;
+                    amplitude *= persistance; // Persistance is < 1 so amplitude decreases
                     frequency *= lacunarity;
                 }
 

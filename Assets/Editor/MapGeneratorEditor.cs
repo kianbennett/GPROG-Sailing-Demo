@@ -25,5 +25,9 @@ public class MapGeneratorEditor : Editor {
             EditorUtility.SetDirty(target);
             // EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
         }
+        if(GUILayout.Button("Next Islands")) {
+            mapGenerator.NextIslands();
+            EditorUtility.SetDirty(target);
+        }
     }
 }

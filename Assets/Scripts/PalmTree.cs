@@ -68,12 +68,13 @@ public class PalmTree : IslandObject {
 
         System.Random random = new System.Random(seed);
 
+        // Create random amount of leaves (fewer small leaves than big leaves)
         float bigLeavesAmount = (4 + 6 * (float) random.NextDouble()) * leafDensity;
         float smallLeavesAmount = (4 + 6 * (float) random.NextDouble()) * leafDensity * 0.66f;
         float leavesAmountCurrent = 0;
         int coconutCount = Mathf.Clamp(random.Next(0, (int) (4 * leafDensity)), 0, 6);
 
-        // leaf size, angle
+        // <leaf size, angle>
         List<Tuple<int, float>> leaves = new List<Tuple<int, float>>();
         List<Tuple<int, float>> smallLeaves = new List<Tuple<int, float>>();
         List<Tuple<int, float>> coconuts = new List<Tuple<int, float>>();
@@ -162,18 +163,24 @@ public class PalmTree : IslandObject {
         }
     }
 
+
     void OnValuesUpdated() {
+        #if UNITY_EDITOR
 		if (!Application.isPlaying) {
+
             UnityEditor.EditorApplication.update -= OnValuesUpdated;
 			Generate();
 		}
+        #endif
 	}
 
     void OnValidate() {
         if(length < 0.5f) length = 0.5f;
 
+        #if UNITY_EDITOR
         if(autoGenerate) {
             UnityEditor.EditorApplication.update += OnValuesUpdated;
         }
+        #endif
     }
 }

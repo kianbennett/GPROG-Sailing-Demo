@@ -31,7 +31,7 @@ public class CameraController : Singleton<CameraController> {
         fovInit = camera.fieldOfView;
     }
 
-    void Update() {
+    void LateUpdate() {
         // Rotate the camera if cursor is locked
         if(Cursor.lockState == CursorLockMode.Locked) {
             Vector2 mouseDelta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
@@ -49,10 +49,12 @@ public class CameraController : Singleton<CameraController> {
             transform.position = shipFocus.cameraPosition.transform.position;
         }
 
+        // Update camera shake values
         shakeTarget = new Vector2(-0.5f + Mathf.PerlinNoise(Time.time * shakeNoiseScale, 0), -0.5f + Mathf.PerlinNoise(0, Time.time * shakeNoiseScale));
         shakeAmount = Mathf.MoveTowards(shakeAmount, 0, Time.deltaTime * shakeDampSpeed);
         Vector2 shakeOffset = shakeAmount * Vector2.Lerp(camera.transform.localPosition, shakeTarget, Time.deltaTime * shakeSmoothAmount);
 
+        // Update camera position and rotation
         camera.transform.localPosition = new Vector3(shakeOffset.x, shakeOffset.y, Mathf.Lerp(camera.transform.localPosition.z, cameraDist, Time.deltaTime * 10));
         float currentRotX = cameraContainer.transform.localRotation.eulerAngles.x;
         float currentRotY = transform.localRotation.eulerAngles.y;

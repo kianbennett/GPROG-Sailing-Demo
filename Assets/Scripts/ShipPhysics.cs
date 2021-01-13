@@ -78,7 +78,7 @@ public class ShipPhysics : MonoBehaviour {
     private float[] speeds = new float[4];
     private float[] amplitudes = new float[4];
 
-    void OnValidate() {
+    void Awake() {
         createPatchMesh();
 
         bodyMeshTriangles = bodyMeshFilter.sharedMesh.triangles;
@@ -115,16 +115,9 @@ public class ShipPhysics : MonoBehaviour {
 
         stopwatch.Restart();
         updatePatchMesh();
-        // Debug.Log("Update patch mesh: " + stopwatch.ElapsedTicks);
-        // stopwatch.Restart();
         updateVertexDistances();
-        // Debug.Log("Update vertex distances: " + stopwatch.ElapsedTicks);
-        // stopwatch.Restart();
         calculateUnderwaterTriangles();
-        // Debug.Log("Calculate underwater triangles: " + stopwatch.ElapsedTicks);
-        // stopwatch.Restart();
         addTriangleForces();
-        // Debug.Log("Add triangle forces: " + stopwatch.ElapsedTicks);
 
         // Draw debug lines for the force applied to each triangle
         if(visualiseForces) {

@@ -121,11 +121,6 @@ public class Ship : MonoBehaviour {
 
         // Angle cannons
         int cannonActive = lookAngleY < 180 ? 0 : 1;
-        // int cannonInactive = lookAngleY < 180 ? 1 : 0;
-        // cannons[cannonActive].localRotation = Quaternion.Euler(Mathf.MoveTowardsAngle(cannons[cannonActive].localRotation.eulerAngles.x, -(lookAngleX + 30), Time.deltaTime * 30), 0, 0);
-        // cannons[cannonInactive].localRotation = Quaternion.Euler(Mathf.MoveTowardsAngle(cannons[cannonInactive].localRotation.eulerAngles.x, 0, Time.deltaTime * 30), 0, 0);
-        // cannonHolders[cannonActive].localRotation = Quaternion.Euler(0, Mathf.MoveTowardsAngle(cannonHolders[cannonActive].localRotation.eulerAngles.x, -lookAngleY, Time.deltaTime * 30), 0);
-        // cannonHolders[cannonInactive].localRotation = Quaternion.Euler(0, Mathf.MoveTowardsAngle(cannonHolders[cannonInactive].localRotation.eulerAngles.x, 0, Time.deltaTime * 30), 0);
         for(int i = 0; i < 2; i++) {
             bool active = isAiming && cannonActive == i;
             float rotX = Mathf.MoveTowardsAngle(cannons[i].localRotation.eulerAngles.x, active ? -(lookAngleX + 30) : 0, Time.deltaTime * 200);
@@ -160,8 +155,6 @@ public class Ship : MonoBehaviour {
     void FixedUpdate() {
         float power = speed * sailLowerAmount * (isAnchored ? 0 : 1);
         rigidbody.AddForce(transform.forward * power);
-        // Vector3 move = transform.forward * power;
-        // transform.Translate(move.x, 0, move.z);
         rigidbody.AddTorque(Vector3.up * turnTorque * power * rudderTurnAmount);
 
         foreach(Transform sail in sails) {
@@ -226,6 +219,7 @@ public class Ship : MonoBehaviour {
 
         float A = A0;
 
+        // Netwon's iteration
         int iter = 0;
         while(Mathf.Abs(r - (float) System.Math.Sinh(A) / A) > 0.00001f) {
             A = A - ((float) System.Math.Sinh(A) - r * A) / ((float) System.Math.Cosh(A) - r);
@@ -253,8 +247,10 @@ public class Ship : MonoBehaviour {
     private void calculateCannonGuideLines(int cannon) {
         int n = cannonGuideRenderer.positionCount;
 
-        // v = (F/m)t
-        Vector3 velocity = (cannons[cannon].transform.forward * cannonBallPrefab.force / cannonBallPrefab.GetComponent<Rigidbody>().mass);
+        // v = (F/m)
+        float mass = cannonBallPrefab.rigidbody.mass;
+        float v = cannonBallPrefab.force / mass;
+        Vector3 velocity = (cannons[cannon].transform.forward * v);
         Vector3 cannonPos = cannonBallSpawnPoints[cannon].position + velocity.normalized * 0.3f;
 
         cannonGuideHitSprite.gameObject.SetActive(false);
@@ -263,7 +259,7 @@ public class Ship : MonoBehaviour {
         for(int i = 0; i < n; i++) {
             cannonGuideRenderer.SetPosition(i, cannonPos);
             float time = Time.fixedDeltaTime * 4;
-            velocity.y += Physics.gravity.y * time;
+            velocity.y += Physics.gravity.y * time; // Gravity is negative so add it
             cannonPos += velocity * time;
 
             if(!hasHit) { // Make sure not to raycast more times than is needed

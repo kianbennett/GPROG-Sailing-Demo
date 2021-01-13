@@ -14,11 +14,6 @@ public class Cannonball : MonoBehaviour {
         Destroy(gameObject, lifetime);
     }
 
-    void Update() {
-        // Debug.DrawLine(transform.position - transform.forward, troasftransform.forward * 2, Color.green);
-        Debug.DrawRay(transform.position - rigidbody.velocity.normalized, rigidbody.velocity.normalized * 2, Color.green);
-    }
-
     void OnTriggerEnter(Collider other) {
         RaycastHit hitInfo;
         bool hit = other.Raycast(new Ray(transform.position - rigidbody.velocity, rigidbody.velocity), out hitInfo, rigidbody.velocity.magnitude * 2);

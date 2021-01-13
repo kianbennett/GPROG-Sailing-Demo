@@ -14,23 +14,6 @@ public class Island : MonoBehaviour {
     private AnimationCurve heightCurve;
     private float uniformScale;
 
-    void Update() {
-        // for(int j = 0; j < MapGenerator.instance.mapHeight; j++) {
-        //     for(int i = 0; i < MapGenerator.instance.mapWidth; i++) {
-        //         float y = heightCurve.Evaluate(heightMap[i, j]) * heightMultiplier;
-        //         Vector3 pos = new Vector3((MapGenerator.instance.mapWidth - 1) / -2f + i, y, (MapGenerator.instance.mapHeight - 1) / 2f - j) * uniformScale;
-        //         pos += transform.position;
-        //         RaycastHit hitInfo;
-        //         bool hit = Physics.Raycast(pos + Vector3.up, Vector3.down, out hitInfo, Mathf.Infinity, LayerMask.GetMask("Terrain"));
-
-        //         if(hit) {
-        //             Debug.DrawLine(pos + Vector3.up, hitInfo.point, Color.green);
-        //             Debug.DrawLine(hitInfo.point, hitInfo.point + hitInfo.normal * 0.2f, Color.blue);
-        //         }
-        //     }
-        // }
-    }
-
     public void GenerateIsland(float[,] heightMap, float heightMultiplier, AnimationCurve heightCurve, float uniformScale, TerrainRegion[] terrainRegions) {
         this.heightMap = heightMap;
         this.heightMultiplier = heightMultiplier;
@@ -65,6 +48,7 @@ public class Island : MonoBehaviour {
                     obj.transform.SetParent(objectContainer, true);
                     obj.Generate();
 
+                    // Align the rotation of the object to the normal of the terrain at that point
                     if(objectInfo.alignToNormal) {
                         Ray ray = new Ray(pos + Vector3.up * 10, Vector3.down);
                         RaycastHit hitInfo;
